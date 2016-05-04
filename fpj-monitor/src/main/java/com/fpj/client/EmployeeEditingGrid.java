@@ -8,6 +8,7 @@ import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat;
+import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.widget.core.client.form.DateField;
 import com.sencha.gxt.widget.core.client.form.DateTimePropertyEditor;
 import com.sencha.gxt.widget.core.client.form.TextField;
@@ -16,6 +17,10 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
 public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmployeeDtoProperties, IEmployeeListLoadResult> {
 	
+	public EmployeeEditingGrid(String urlPrefix) {
+		super(urlPrefix);
+	}
+
 	private EmployeeGridConstants constants;
 	
 	@Override
@@ -68,6 +73,21 @@ public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmplo
 			constants = GWT.create(EmployeeGridConstants.class);
 		}
 		return constants;
+	}
+
+	@Override
+	protected Class<IEmployeeDto> getModelTypeClass() {
+		return IEmployeeDto.class;
+	}
+
+	@Override
+	protected void fillModelFromChange(Store<IEmployeeDto>.Record modifiedRecord, IEmployeeDto storeElem) {
+		IEmployeeDtoProperties properties = GWT.create(IEmployeeDtoProperties.class);
+		storeElem.setId(modifiedRecord.getValue(properties.id()));
+		storeElem.setFirstName(modifiedRecord.getValue(properties.firstName()));
+		storeElem.setLastName(modifiedRecord.getValue(properties.lastName()));
+		storeElem.setCompanyName(modifiedRecord.getValue(properties.companyName()));
+		storeElem.setVisaExpiredDate(modifiedRecord.getValue(properties.visaExpiredDate()));
 	}
 
 }
