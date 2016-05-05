@@ -28,7 +28,7 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.editing.GridRowEditing;
 
-public abstract class GenericEditingGrid<MODEL_TYPE, MODEL_TYPE_PROPERTIES extends IdPropertyAccess<MODEL_TYPE>, RESULT_LIST extends PagingLoadResult<MODEL_TYPE>>
+public abstract class GenericEditingGrid<MODEL_TYPE, MODEL_TYPE_PROPERTIES extends IdPropertyAccess<MODEL_TYPE>, RESULT_LIST extends PagingLoadResult<MODEL_TYPE>, FACTORY extends LoadConfigFactory>
 		extends ContentPanel implements IsWidget {
 
 	protected final List<EditorConfigurer<MODEL_TYPE, ?>> configurers = new ArrayList<EditorConfigurer<MODEL_TYPE, ?>>();
@@ -36,7 +36,7 @@ public abstract class GenericEditingGrid<MODEL_TYPE, MODEL_TYPE_PROPERTIES exten
 	final GridRowEditing<MODEL_TYPE> editingGrid;
 	final ListLoader<FilterPagingLoadConfig, RESULT_LIST> listLoader;
 	MODEL_TYPE_PROPERTIES properties = createModelProperties();
-	LoadConfigFactory factory = createFactory();
+	FACTORY factory = createFactory();
 	private final ListStore<MODEL_TYPE> listStore;
 	private GenericGridConstants constants;
 
@@ -95,7 +95,7 @@ public abstract class GenericEditingGrid<MODEL_TYPE, MODEL_TYPE_PROPERTIES exten
 
 	protected abstract Class<MODEL_TYPE> getModelTypeClass();
 
-	protected abstract LoadConfigFactory createFactory();
+	protected abstract FACTORY createFactory();
 
 	protected abstract MODEL_TYPE_PROPERTIES createModelProperties();
 

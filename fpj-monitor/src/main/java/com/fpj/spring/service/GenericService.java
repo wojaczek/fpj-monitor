@@ -40,7 +40,7 @@ public abstract class GenericService<DTO_TYPE, LIST_RESULT extends PagingLoadRes
 		result.setOffset(page.getOffset());
 		result.setTotalLength((int)allEntities.getTotalElements());
 		result.setData(getListOfDtos(allEntities.getContent()));
-		return null;
+		return result;
 	}
 
 	private List<DTO_TYPE> getListOfDtos(List<ENTITY> content) {

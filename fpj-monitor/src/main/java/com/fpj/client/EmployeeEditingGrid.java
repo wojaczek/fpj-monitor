@@ -15,7 +15,7 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
-public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmployeeDtoProperties, IEmployeeListLoadResult> {
+public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmployeeDtoProperties, IEmployeePagingoadResult, IEmployeeAutoBeanFactory> {
 	
 	public EmployeeEditingGrid(String urlPrefix) {
 		super(urlPrefix);
@@ -24,7 +24,7 @@ public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmplo
 	private EmployeeGridConstants constants;
 	
 	@Override
-	protected LoadConfigFactory createFactory() {
+	protected IEmployeeAutoBeanFactory createFactory() {
 		return GWT.create(IEmployeeAutoBeanFactory.class);
 	}
 
@@ -64,11 +64,11 @@ public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmplo
 	}
 
 	@Override
-	protected Class<IEmployeeListLoadResult> getListResultClass() {
-		return IEmployeeListLoadResult.class;
+	protected Class<IEmployeePagingoadResult> getListResultClass() {
+		return IEmployeePagingoadResult.class;
 	}
 
-	public EmployeeGridConstants getConstants() {
+	private EmployeeGridConstants getConstants() {
 		if (constants == null ){
 			constants = GWT.create(EmployeeGridConstants.class);
 		}

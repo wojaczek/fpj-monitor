@@ -19,6 +19,7 @@ public class Monitor implements EntryPoint {
 
 	EmployeeEditingGrid empGrid;
 	private final ContentPanel contentPanel = new ContentPanel();
+	private CompanyEditingGrid companyGrid;
 	
 	public void onModuleLoad() {
 		Container mainContainer = new HorizontalLayoutContainer();
@@ -38,20 +39,22 @@ public class Monitor implements EntryPoint {
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				if (event.getValue()){
 					contentPanel.clear();
-					contentPanel.add(empGrid);	
+					contentPanel.add(getEmpGrid());	
 				}
 			}
 		});
-		final ToggleButton buttonNone = new ToggleButton("None");
+		final ToggleButton buttonNone = new ToggleButton("Companies");
 		buttonNone.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				if (event.getValue()){
 					contentPanel.clear();
-					contentPanel.add(new ContentPanel());
+					contentPanel.add(getCompanyGrid());
 				}
 			}
+
+			
 		});
 		
 		menuPanel.add(buttonEmp);
@@ -68,6 +71,11 @@ public class Monitor implements EntryPoint {
 		}
 		return empGrid;
 	}
-
+	private CompanyEditingGrid getCompanyGrid() {
+		if (companyGrid==null){
+			companyGrid = new CompanyEditingGrid("spring/company");
+		}
+		return companyGrid;
+	}
 
 }

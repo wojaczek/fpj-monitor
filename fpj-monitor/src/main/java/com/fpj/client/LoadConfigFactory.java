@@ -7,4 +7,5 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 public interface LoadConfigFactory extends AutoBeanFactory {
 	AutoBean<FilterPagingLoadConfig> loadConfig();
 
+
 }

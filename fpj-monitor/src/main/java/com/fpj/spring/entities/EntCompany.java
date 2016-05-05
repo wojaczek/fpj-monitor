@@ -2,7 +2,10 @@ package com.fpj.spring.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -10,6 +13,8 @@ import javax.persistence.Table;
 public class EntCompany {
 
 	@Id
+	@SequenceGenerator(name="company_seq", sequenceName="company_seq")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="company_seq")
 	private Integer id;
 	@Column(length=128)
 	private String companyName;
