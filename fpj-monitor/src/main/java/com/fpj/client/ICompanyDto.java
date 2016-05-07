@@ -1,9 +1,7 @@
 package com.fpj.client;
 
-public interface ICompanyDto {
+public interface ICompanyDto extends IdentifiableDto{
 
-	Integer getId();
-	void setId(Integer id);
 	String getCompanyName();
 	void setCompanyName(String companyName);
 	

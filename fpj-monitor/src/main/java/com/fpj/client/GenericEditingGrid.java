@@ -22,21 +22,28 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.writer.JsonWriter;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
+import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent.CompleteEditHandler;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.grid.Grid.GridCell;
 import com.sencha.gxt.widget.core.client.grid.editing.GridRowEditing;
+import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
-public abstract class GenericEditingGrid<MODEL_TYPE, MODEL_TYPE_PROPERTIES extends IdPropertyAccess<MODEL_TYPE>, RESULT_LIST extends PagingLoadResult<MODEL_TYPE>, FACTORY extends LoadConfigFactory>
+public abstract class GenericEditingGrid<MODEL_TYPE, MODEL_TYPE_PROPERTIES extends IdPropertyAccess<MODEL_TYPE>, RESULT_LIST extends PagingLoadResult<MODEL_TYPE>, FACTORY extends LoadConfigFactory<MODEL_TYPE>>
 		extends ContentPanel implements IsWidget {
 
 	protected final List<EditorConfigurer<MODEL_TYPE, ?>> configurers = new ArrayList<EditorConfigurer<MODEL_TYPE, ?>>();
 	final Grid<MODEL_TYPE> basicGrid;
 	final GridRowEditing<MODEL_TYPE> editingGrid;
 	final ListLoader<FilterPagingLoadConfig, RESULT_LIST> listLoader;
-	MODEL_TYPE_PROPERTIES properties = createModelProperties();
-	FACTORY factory = createFactory();
+	protected MODEL_TYPE_PROPERTIES properties = createModelProperties();
+	protected FACTORY factory = createFactory();
 	private final ListStore<MODEL_TYPE> listStore;
 	private GenericGridConstants constants;
 
@@ -85,11 +92,35 @@ public abstract class GenericEditingGrid<MODEL_TYPE, MODEL_TYPE_PROPERTIES exten
 		applyEditors();
 		listLoader = createListLoader(urlPrefix);
 		basicGrid.setLoader(listLoader);
-		this.add(basicGrid);
+		VerticalLayoutContainer vlc = new VerticalLayoutContainer();
+		
+		ToolBar bar = new ToolBar();
+		bar.add(this.createAddButton());
+		
+		vlc.add(bar, new VerticalLayoutData(1, -1));
+		vlc.add(basicGrid, new  VerticalLayoutData(1, 1));
+		
+		this.add(vlc);
 		listLoader.load();
 		this.setHeight(500);
+		this.setHeaderVisible(false);
 		System.out.println("Grid initialized");
 	}
+
+	private IsWidget createAddButton() {
+		TextButton addButton = new TextButton(getConstants().add());
+		addButton.addSelectHandler(new SelectHandler() {
+			@Override
+			public void onSelect(SelectEvent event) {
+				MODEL_TYPE newRow = createModelType();
+				listStore.add(0, newRow);
+				editingGrid.startEditing(new GridCell(0,0));
+			}
+		});
+		return addButton;
+	}
+
+	protected abstract MODEL_TYPE createModelType(); 
 
 	protected abstract void fillModelFromChange(Store<MODEL_TYPE>.Record modifiedRecord, MODEL_TYPE storeElem);
 

@@ -32,4 +32,14 @@ public class CompanyService extends GenericService<ICompanyDto, CompanyPagingRes
 		return companyRepository;
 	}
 
+	@Override
+	protected void fillEntity(EntCompany entity, ICompanyDto dto) {
+		entity.setCompanyName(dto.getCompanyName());
+	}
+
+	@Override
+	protected EntCompany createEntity() {
+		return new EntCompany();
+	}
+
 }

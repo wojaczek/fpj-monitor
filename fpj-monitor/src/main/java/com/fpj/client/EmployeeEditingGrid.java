@@ -90,4 +90,9 @@ public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmplo
 		storeElem.setVisaExpiredDate(modifiedRecord.getValue(properties.visaExpiredDate()));
 	}
 
+	@Override
+	protected IEmployeeDto createModelType() {
+		return factory.create(IEmployeeDto.class).as();
+	}
+
 }

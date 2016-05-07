@@ -8,4 +8,6 @@ public interface GenericGridConstants extends Messages {
 	String saveError(String errorCode);
 	@DefaultMessage("Błąd zapisu")
 	String saveErrorTitle();
+	@DefaultMessage("Dodaj")
+	String add();
 }

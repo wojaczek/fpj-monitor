@@ -15,7 +15,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fpj.client.ICompanyDto;
 import com.fpj.spring.jackson.mixin.FilterConfigMixIn;
+import com.fpj.spring.jackson.mixin.ICompanyDtoMixIn;
 import com.fpj.spring.jackson.mixin.SortInfoMixIn;
 import com.sencha.gxt.data.shared.SortInfo;
 import com.sencha.gxt.data.shared.loader.FilterConfig;
@@ -52,6 +54,7 @@ public class WebappConfig extends WebMvcConfigurerAdapter {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.addMixIn(SortInfo.class, SortInfoMixIn.class);
 		objectMapper.addMixIn(FilterConfig.class, FilterConfigMixIn.class);
+		objectMapper.addMixIn(ICompanyDto.class, ICompanyDtoMixIn.class);
 		jsonConverter.setObjectMapper(objectMapper);
 		return jsonConverter;
 	}

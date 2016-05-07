@@ -63,5 +63,10 @@ public class CompanyEditingGrid extends GenericEditingGrid<ICompanyDto, ICompany
 		}
 		return constants;
 	}
+
+	@Override
+	protected ICompanyDto createModelType() {
+		return factory.create(ICompanyDto.class).as();
+	}
 	
 }
