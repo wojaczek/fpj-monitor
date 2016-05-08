@@ -24,6 +24,7 @@ public class Monitor implements EntryPoint {
 	public void onModuleLoad() {
 		Container mainContainer = new HorizontalLayoutContainer();
 		mainContainer.add(createMenuPanel());
+		contentPanel.setWidth(700);
 		mainContainer.add(contentPanel);
 		contentPanel.setHeaderVisible(false);
 		RootPanel.get("root").add(mainContainer);

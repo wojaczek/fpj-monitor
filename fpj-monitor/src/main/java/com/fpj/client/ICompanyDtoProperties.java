@@ -6,4 +6,5 @@ public interface ICompanyDtoProperties extends IdPropertyAccess<ICompanyDto>{
 	
 	ValueProvider<ICompanyDto, String> companyName();
 
+
 }

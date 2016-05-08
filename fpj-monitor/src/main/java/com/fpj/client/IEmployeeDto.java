@@ -2,13 +2,13 @@ package com.fpj.client;
 
 import java.util.Date;
 
-public interface IEmployeeDto extends IdentifiableDto {
+public interface IEmployeeDto extends IIdentifiableDto {
 
 	Date getVisaExpiredDate();
 	void setVisaExpiredDate(Date visaExpiredDate);
 	
-	String getCompanyName();
-	void setCompanyName(String companyName);
+	ICompanyDto getCompany();
+	void setCompany(ICompanyDto company);
 
 	String getLastName();
 	void setLastName(String lastName);

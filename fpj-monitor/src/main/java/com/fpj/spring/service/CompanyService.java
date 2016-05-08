@@ -5,12 +5,12 @@ import org.springframework.stereotype.Service;
 
 import com.fpj.client.ICompanyDto;
 import com.fpj.spring.dtos.CompanyDto;
-import com.fpj.spring.dtos.CompanyPagingResultBean;
+import com.fpj.spring.dtos.CompanyPagingLoadResultBean;
 import com.fpj.spring.entities.EntCompany;
 import com.fpj.spring.repository.CompanyRepository;
 
 	@Service
-public class CompanyService extends GenericService<ICompanyDto, CompanyPagingResultBean, EntCompany> {
+public class CompanyService extends GenericService<ICompanyDto, CompanyPagingLoadResultBean, EntCompany> {
 	@Autowired
 	private CompanyRepository companyRepository;
 
@@ -23,8 +23,8 @@ public class CompanyService extends GenericService<ICompanyDto, CompanyPagingRes
 	}
 
 	@Override
-	protected CompanyPagingResultBean createResult() {
-		return new CompanyPagingResultBean();
+	protected CompanyPagingLoadResultBean createResult() {
+		return new CompanyPagingLoadResultBean();
 	}
 
 	@Override

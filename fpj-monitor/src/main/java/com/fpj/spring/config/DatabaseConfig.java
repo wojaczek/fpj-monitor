@@ -17,10 +17,12 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableJpaRepositories(basePackages = { "com.fpj.spring.repository" })
 @PropertySources({ @PropertySource("classpath:db.properties") })
+@EnableTransactionManagement
 public class DatabaseConfig {
 
 	@Value("${driverClass}")

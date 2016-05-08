@@ -7,9 +7,8 @@ import com.google.gwt.core.shared.GWT;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
-import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
-public class CompanyEditingGrid extends GenericEditingGrid<ICompanyDto, ICompanyDtoProperties, ICompanyPagingLoadResultBean, ICompanyAutoBeanFactory> {
+public class CompanyEditingGrid extends GenericEditingGrid<ICompanyDto, ICompanyDtoProperties, ICompanyPagingLoadResult, ICompanyAutoBeanFactory> {
 
 	private CompanyGridConstants constants;
 
@@ -40,21 +39,20 @@ public class CompanyEditingGrid extends GenericEditingGrid<ICompanyDto, ICompany
 	}
 
 	@Override
-	protected Class<ICompanyPagingLoadResultBean> getListResultClass() {
-		return ICompanyPagingLoadResultBean.class;
+	protected Class<ICompanyPagingLoadResult> getListResultClass() {
+		return ICompanyPagingLoadResult.class;
 	}
 
 	@Override
-	protected ColumnModel<ICompanyDto> createColumnModel() {
-		List<ColumnConfig<ICompanyDto, ?>> columnConfig = new ArrayList<ColumnConfig<ICompanyDto, ?>>();
+	protected List<ColumnConfig<ICompanyDto,?>> createColumnConfigs() {
+		List<ColumnConfig<ICompanyDto, ?>> columnConfigs = new ArrayList<ColumnConfig<ICompanyDto, ?>>();
 
 		ColumnConfig<ICompanyDto, String> firstNameColumn = new ColumnConfig<>(properties.companyName(), 150, getConstants().columnName());
 		configurers.add(new EditorConfigurer<ICompanyDto, String>(firstNameColumn, new TextField()));
-		columnConfig.add(firstNameColumn);
+		columnConfigs.add(firstNameColumn);
 		
-		ColumnModel<ICompanyDto> cm = new ColumnModel<ICompanyDto>(columnConfig);
 		
-		return cm;
+		return columnConfigs;
 	}
 
 	private CompanyGridConstants getConstants() {

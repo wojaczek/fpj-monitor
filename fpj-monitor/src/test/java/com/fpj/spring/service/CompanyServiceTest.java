@@ -10,7 +10,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import com.fpj.spring.config.DatabaseConfig;
 import com.fpj.spring.config.PropertyConfiguration;
-import com.fpj.spring.dtos.CompanyPagingResultBean;
+import com.fpj.spring.dtos.CompanyPagingLoadResultBean;
 import com.fpj.spring.entities.EntCompany;
 import com.fpj.spring.repository.CompanyRepository;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
@@ -30,7 +30,7 @@ CompanyRepository companyRepository;
 		FilterPagingLoadConfigBean loadConfig = new FilterPagingLoadConfigBean();
 		loadConfig.setLimit(20);
 		loadConfig.setOffset(0);
-		CompanyPagingResultBean resultBean = companyService.list(loadConfig);
+		CompanyPagingLoadResultBean resultBean = companyService.list(loadConfig);
 		Assert.assertEquals("Not retrieved properly", 1, resultBean.getTotalLength());
 		Assert.assertEquals("Not retrieved correctly", 1, resultBean.getData().size());
 		Assert.assertEquals("Not retrieved correctly", "FPJ", resultBean.getData().get(0).getCompanyName());

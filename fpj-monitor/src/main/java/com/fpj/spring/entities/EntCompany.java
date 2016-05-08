@@ -10,7 +10,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="company")
-public class EntCompany {
+public class EntCompany implements IdentifiableEntity{
 
 	@Id
 	@SequenceGenerator(name="company_seq", sequenceName="company_seq")
@@ -18,10 +18,11 @@ public class EntCompany {
 	private Integer id;
 	@Column(length=128)
 	private String companyName;
-	
+	@Override
 	public Integer getId() {
 		return id;
 	}
+	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}

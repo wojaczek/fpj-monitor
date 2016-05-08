@@ -1,6 +1,7 @@
 package com.fpj.client;
 
-public interface IdentifiableDto {
+public interface IIdentifiableDto {
 	Integer getId();
 	void setId(Integer id);
+	String getButton();
 }

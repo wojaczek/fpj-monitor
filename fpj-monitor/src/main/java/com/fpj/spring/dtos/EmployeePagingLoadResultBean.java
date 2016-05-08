@@ -5,6 +5,6 @@ import com.fpj.client.IEmployeePagingoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 
 @SuppressWarnings("serial")
-public class EmployeePagingLoadResult extends PagingLoadResultBean<IEmployeeDto> implements IEmployeePagingoadResult {
+public class EmployeePagingLoadResultBean extends PagingLoadResultBean<IEmployeeDto> implements IEmployeePagingoadResult {
 	
 }
