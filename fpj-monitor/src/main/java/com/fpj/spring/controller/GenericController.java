@@ -39,7 +39,7 @@ public abstract class GenericController<DTO extends IIdentifiableDto, LIST_RESUL
 		return getService().createEmpty();
 	}
 
-	@RequestMapping(value="delete/{1}", method= RequestMethod.GET,  consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="delete/{id}", method= RequestMethod.GET,  consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody void delete(@PathVariable Integer id){
 		getService().delete(id);
 	}

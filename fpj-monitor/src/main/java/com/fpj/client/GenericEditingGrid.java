@@ -131,7 +131,7 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 		ActionCell<Integer> cell = new ActionCell<Integer>("Delete", new Delegate<Integer>() {
 			@Override
 			public void execute(final Integer object) {
-				RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, urlPrefix+"/delete");
+				RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, urlPrefix+"/delete/"+object);
 				builder.setHeader("Accept", "application/json");
 				builder.setHeader("Content-Type", "application/json");
 				try {
