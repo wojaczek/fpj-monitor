@@ -9,6 +9,5 @@ public interface IdPropertyAccess<T> extends PropertyAccess<T> {
 	@Path("id")
 	ModelKeyProvider<T> key();
 	ValueProvider<T, Integer> id();
-	ValueProvider<T, String> button();
 
 }

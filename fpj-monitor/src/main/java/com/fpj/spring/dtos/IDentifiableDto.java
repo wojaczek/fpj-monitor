@@ -13,8 +13,5 @@ public class IDentifiableDto implements IIdentifiableDto{
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	@Override
-	public String getButton() {
-		return "";
-	}
+	
 }

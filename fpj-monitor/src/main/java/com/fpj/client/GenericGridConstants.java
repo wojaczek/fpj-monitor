@@ -10,4 +10,6 @@ public interface GenericGridConstants extends Messages {
 	String saveErrorTitle();
 	@DefaultMessage("Dodaj")
 	String add();
+	@DefaultMessage("Błąd usuwania")
+	String deleteErrorTitle();
 }

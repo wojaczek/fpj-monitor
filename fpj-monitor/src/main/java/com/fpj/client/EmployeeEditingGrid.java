@@ -79,6 +79,7 @@ public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmplo
 		companyNameColumn.setCell(cell );
 		final ListStore<ICompanyDto> store = new ListStore<ICompanyDto>(companyProperties.id());		
 		ComboBox<ICompanyDto> companyComboBox = new ComboBox<ICompanyDto>(store, companyProperties.companyName());
+		companyComboBox.setAllowBlank(true);
 		configurers.add(new EditorConfigurer<IEmployeeDto, ICompanyDto>(companyNameColumn, companyComboBox));
 		columnConfig.add(companyNameColumn);
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,  "spring/company/list");

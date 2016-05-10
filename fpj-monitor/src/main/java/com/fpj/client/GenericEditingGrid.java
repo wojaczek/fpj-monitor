@@ -3,16 +3,14 @@ package com.fpj.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.sencha.gxt.cell.core.client.ButtonCell;
 import com.sencha.gxt.data.client.loader.HttpProxy;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.SortInfo;
@@ -23,14 +21,12 @@ import com.sencha.gxt.data.shared.loader.LoadResultListStoreBinding;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.writer.JsonWriter;
-import com.sencha.gxt.theme.gray.client.tools.GrayTools.GrayToolResources;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent;
-import com.sencha.gxt.widget.core.client.event.BeforeStartEditEvent.BeforeStartEditHandler;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent.CompleteEditHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
@@ -38,6 +34,7 @@ import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.Grid.GridCell;
+import com.sencha.gxt.widget.core.client.grid.editing.ClicksToEdit;
 import com.sencha.gxt.widget.core.client.grid.editing.GridRowEditing;
 import com.sencha.gxt.widget.core.client.toolbar.PagingToolBar;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
@@ -66,6 +63,7 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 		columnModel = new ColumnModel<MODEL_TYPE>(columnConfigs);
 		basicGrid = new Grid<MODEL_TYPE>(listStore, columnModel);
 		editingGrid = new GridRowEditing<MODEL_TYPE>(basicGrid);
+		editingGrid.setClicksToEdit(ClicksToEdit.TWO);
 		editingGrid.addCompleteEditHandler(new CompleteEditHandler<MODEL_TYPE>() {
 
 			@Override
@@ -84,8 +82,9 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 								if (response.getStatusCode() == 200) {
 									listStore.commitChanges();
 								} else {
-									AlertMessageBox mBox = new AlertMessageBox(getConstants().saveErrorTitle(), getConstants()
-											.saveError(Integer.toString(response.getStatusCode())));
+									HttpErrorStatusHandler handler = new HttpErrorStatusHandler(response.getStatusCode());
+									AlertMessageBox mBox = new AlertMessageBox(getConstants().saveErrorTitle(),
+											handler.getMessage());
 									mBox.show();
 									listStore.rejectChanges();
 								}
@@ -127,11 +126,14 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 
 	private ColumnConfig<MODEL_TYPE, ?> createDeleteButton() {
 		ColumnConfig<MODEL_TYPE, Integer> deleteColumn = new ColumnConfig<MODEL_TYPE, Integer>(properties.id());
-		GrayToolResources resources = GWT.create(GrayToolResources.class);
-		ActionCell<Integer> cell = new ActionCell<Integer>("Delete", new Delegate<Integer>() {
+		ButtonCell<Integer> cell = new ButtonCell<Integer>();
+		cell.setText("Delete");
+		cell.addSelectHandler(new SelectHandler() {
+			
 			@Override
-			public void execute(final Integer object) {
-				RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, urlPrefix+"/delete/"+object);
+			public void onSelect(SelectEvent event) {
+				final Integer deletedId = listStore.get(event.getContext().getIndex()).getId();
+				RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, urlPrefix+"/delete/"+deletedId);
 				builder.setHeader("Accept", "application/json");
 				builder.setHeader("Content-Type", "application/json");
 				try {
@@ -140,17 +142,15 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 						@Override
 						public void onResponseReceived(Request request, Response response) {
 							if (response.getStatusCode()==200){
-								MODEL_TYPE deletedObject=null;
-								for (MODEL_TYPE elem : listStore.getAll()) {
-									if (elem.getId()==object){
-										deletedObject = elem;
-										break;
-									}
-								}
-								listStore.remove(deletedObject);
+								listStore.remove(deletedId);
 								listStore.commitChanges();
+							}else{
+								HttpErrorStatusHandler handler = new HttpErrorStatusHandler(response.getStatusCode());
+								AlertMessageBox mBox = new AlertMessageBox(getConstants().deleteErrorTitle(),
+										handler.getMessage());
+								mBox.show();
 							}
-							editingGrid.cancelEditing();
+							
 						}
 						
 						@Override
@@ -165,6 +165,7 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 				}
 			}
 		});
+
 		deleteColumn.setCell(cell);
 		return deleteColumn;
 	}
@@ -190,8 +191,9 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 								listStore.commitChanges();
 								editingGrid.startEditing(new GridCell(row, 0));
 							} else {
-								AlertMessageBox mBox = new AlertMessageBox(getConstants().saveErrorTitle(), getConstants()
-										.saveError(Integer.toString(response.getStatusCode())));
+								HttpErrorStatusHandler handler = new HttpErrorStatusHandler(response.getStatusCode());
+								AlertMessageBox mBox = new AlertMessageBox(getConstants().saveErrorTitle(),
+										handler.getMessage());
 								mBox.show();
 							}
 						}

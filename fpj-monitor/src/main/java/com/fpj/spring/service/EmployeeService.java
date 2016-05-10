@@ -26,6 +26,8 @@ public class EmployeeService extends GenericService<IEmployeeDto, EmployeePaging
 		entity.setVisaExpiredDate(dto.getVisaExpiredDate());
 		if (dto.getCompany()!=null && dto.getCompany().getId()!=null){
 			entity.setCompany(companyRepository.getOne(dto.getCompany().getId()));
+		} else{
+			entity.setCompany(null);
 		}
 	}
 
