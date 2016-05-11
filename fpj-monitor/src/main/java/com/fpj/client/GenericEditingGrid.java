@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.sencha.gxt.cell.core.client.ButtonCell;
@@ -22,7 +19,6 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.writer.JsonWriter;
 import com.sencha.gxt.widget.core.client.ContentPanel;
-import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
@@ -30,11 +26,11 @@ import com.sencha.gxt.widget.core.client.event.CompleteEditEvent;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent.CompleteEditHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.grid.CellSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.Grid.GridCell;
-import com.sencha.gxt.widget.core.client.grid.editing.ClicksToEdit;
 import com.sencha.gxt.widget.core.client.grid.editing.GridRowEditing;
 import com.sencha.gxt.widget.core.client.toolbar.PagingToolBar;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
@@ -50,10 +46,11 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 	protected FACTORY factory = createFactory();
 	private final ListStore<MODEL_TYPE> listStore;
 	private GenericGridConstants constants;
-	private final  String urlPrefix;
+	private final String urlPrefix;
 	private ColumnModel<MODEL_TYPE> columnModel;
+	final CellSelectionModel<MODEL_TYPE> selectionModel = new CellSelectionModel<>();
 	private List<ColumnConfig<MODEL_TYPE, ?>> columnConfigs;
-	
+
 	public GenericEditingGrid(final String urlPrefix) {
 		super();
 		this.urlPrefix = urlPrefix;
@@ -63,7 +60,8 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 		columnModel = new ColumnModel<MODEL_TYPE>(columnConfigs);
 		basicGrid = new Grid<MODEL_TYPE>(listStore, columnModel);
 		editingGrid = new GridRowEditing<MODEL_TYPE>(basicGrid);
-		editingGrid.setClicksToEdit(ClicksToEdit.TWO);
+
+		// editingGrid.setClicksToEdit(ClicksToEdit.ONE);
 		editingGrid.addCompleteEditHandler(new CompleteEditHandler<MODEL_TYPE>() {
 
 			@Override
@@ -71,34 +69,15 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 				for (final Store<MODEL_TYPE>.Record modifiedRecord : listStore.getModifiedRecords()) {
 					MODEL_TYPE storeElem = factory.create(GenericEditingGrid.this.getModelTypeClass()).as();
 					fillModelFromChange(modifiedRecord, storeElem);
-					RequestBuilder builder = new RequestBuilder(RequestBuilder.PUT, urlPrefix + "/update");
-					builder.setHeader("Accept", "application/json");
-					builder.setHeader("Content-Type", "application/json");
-					JsonWriter<MODEL_TYPE> writer = new JsonWriter<MODEL_TYPE>(factory, getModelTypeClass());
-					try {
-						builder.sendRequest(writer.write(storeElem), new RequestCallback() {
-							@Override
-							public void onResponseReceived(Request request, Response response) {
-								if (response.getStatusCode() == 200) {
-									listStore.commitChanges();
-								} else {
-									HttpErrorStatusHandler handler = new HttpErrorStatusHandler(response.getStatusCode());
-									AlertMessageBox mBox = new AlertMessageBox(getConstants().saveErrorTitle(),
-											handler.getMessage());
-									mBox.show();
-									listStore.rejectChanges();
-								}
-							}
+					JsonRequestBuilder builder = new JsonRequestBuilder(RequestBuilder.PUT, urlPrefix + "/update") {
+						@Override
+						protected void successMethod(Response response) {
+							listStore.commitChanges();
+						}
 
-							@Override
-							public void onError(Request request, Throwable exception) {
-								// TODO Auto-generated method stub
-							}
-						});
-					} catch (RequestException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					};
+					JsonWriter<MODEL_TYPE> writer = new JsonWriter<MODEL_TYPE>(factory, getModelTypeClass());
+					builder.sendRequest(writer.write(storeElem));
 				}
 			}
 		});
@@ -106,16 +85,16 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 		pagingLoader = createListLoader(urlPrefix);
 		basicGrid.setLoader(pagingLoader);
 		VerticalLayoutContainer vlc = new VerticalLayoutContainer();
-		
+
 		ToolBar bar = new ToolBar();
 		bar.add(this.createAddButton());
-		
+
 		PagingToolBar ptb = new PagingToolBar(10);
 		ptb.bind(pagingLoader);
-		
+
 		vlc.add(bar, new VerticalLayoutData(1, -1));
 		vlc.add(ptb, new VerticalLayoutData(1, -1));
-		vlc.add(basicGrid, new  VerticalLayoutData(1, -1));
+		vlc.add(basicGrid, new VerticalLayoutData(1, -1));
 		this.add(vlc);
 		pagingLoader.load();
 		this.setHeight(500);
@@ -123,96 +102,67 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 		System.out.println("Grid initialized");
 	}
 
-
-	private ColumnConfig<MODEL_TYPE, ?> createDeleteButton() {
+	private ColumnConfig<MODEL_TYPE, Integer> createDeleteButton() {
 		ColumnConfig<MODEL_TYPE, Integer> deleteColumn = new ColumnConfig<MODEL_TYPE, Integer>(properties.id());
-		ButtonCell<Integer> cell = new ButtonCell<Integer>();
-		cell.setText("Delete");
-		cell.addSelectHandler(new SelectHandler() {
-			
+		ButtonCell<Integer> cell = new ButtonCell<Integer>() {
 			@Override
-			public void onSelect(SelectEvent event) {
+			public boolean handlesSelection() {
+				return true;
+			}
+		};
+
+		cell.addSelectHandler(new SelectHandler() {
+
+			@Override
+			public void onSelect(final SelectEvent event) {
 				final Integer deletedId = listStore.get(event.getContext().getIndex()).getId();
-				RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, urlPrefix+"/delete/"+deletedId);
-				builder.setHeader("Accept", "application/json");
-				builder.setHeader("Content-Type", "application/json");
-				try {
-					builder.sendRequest(null, new RequestCallback() {
-						
-						@Override
-						public void onResponseReceived(Request request, Response response) {
-							if (response.getStatusCode()==200){
-								listStore.remove(deletedId);
-								listStore.commitChanges();
-							}else{
-								HttpErrorStatusHandler handler = new HttpErrorStatusHandler(response.getStatusCode());
-								AlertMessageBox mBox = new AlertMessageBox(getConstants().deleteErrorTitle(),
-										handler.getMessage());
-								mBox.show();
-							}
-							
-						}
-						
-						@Override
-						public void onError(Request request, Throwable exception) {
-							// TODO Auto-generated method stub
-							
-						}
-					});
-				} catch (RequestException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				JsonRequestBuilder builder = new JsonRequestBuilder(RequestBuilder.GET, urlPrefix + "/delete/" + deletedId) {
+					@Override
+					protected void successMethod(Response response) {
+						listStore.remove (event.getContext().getIndex());
+						listStore.commitChanges();
+					}
+
+				};
+				builder.sendRequest(null);
+
 			}
 		});
-
+		cell.setText("Delete");
 		deleteColumn.setCell(cell);
+		deleteColumn.setFixed(true);
+		deleteColumn.setHideable(false);
+		deleteColumn.setMenuDisabled(true);
+		deleteColumn.setResizable(false);
+		deleteColumn.setSortable(false);
+
 		return deleteColumn;
 	}
-
 
 	private IsWidget createAddButton() {
 		TextButton addButton = new TextButton(getConstants().add());
 		addButton.addSelectHandler(new SelectHandler() {
 			@Override
 			public void onSelect(SelectEvent event) {
-				RequestBuilder builder = new RequestBuilder(RequestBuilder.PUT, urlPrefix + "/create");
-				builder.setHeader("Accept", "application/json");
-				builder.setHeader("Content-Type", "application/json");
-				try {
-					builder.sendRequest(null, new RequestCallback() {
-						@Override
-						public void onResponseReceived(Request request, Response response) {
-							if (response.getStatusCode() == 200) {
-								JsonReader<MODEL_TYPE, MODEL_TYPE> reader = new JsonReader<MODEL_TYPE, MODEL_TYPE>(factory, getModelTypeClass());
-								MODEL_TYPE respondedModel = reader.read(null, response.getText());
-								listStore.add(0, respondedModel);
-								int row = listStore.indexOf(respondedModel);
-								listStore.commitChanges();
-								editingGrid.startEditing(new GridCell(row, 0));
-							} else {
-								HttpErrorStatusHandler handler = new HttpErrorStatusHandler(response.getStatusCode());
-								AlertMessageBox mBox = new AlertMessageBox(getConstants().saveErrorTitle(),
-										handler.getMessage());
-								mBox.show();
-							}
-						}
-
-						@Override
-						public void onError(Request request, Throwable exception) {
-							// TODO Auto-generated method stub
-						}
-					});
-				} catch (RequestException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				JsonRequestBuilder builder = new JsonRequestBuilder(RequestBuilder.PUT, urlPrefix + "/create"){
+					@Override
+					protected void successMethod(Response response) {
+						JsonReader<MODEL_TYPE, MODEL_TYPE> reader = new JsonReader<MODEL_TYPE, MODEL_TYPE>(factory,
+								getModelTypeClass());
+						MODEL_TYPE respondedModel = reader.read(null, response.getText());
+						listStore.add(0, respondedModel);
+						int row = listStore.indexOf(respondedModel);
+						listStore.commitChanges();
+						editingGrid.startEditing(new GridCell(row, 0));
+					}
+				};
+				builder.sendRequest(null);
 			}
 		});
 		return addButton;
 	}
 
-	protected abstract MODEL_TYPE createModelType(); 
+	protected abstract MODEL_TYPE createModelType();
 
 	protected abstract void fillModelFromChange(Store<MODEL_TYPE>.Record modifiedRecord, MODEL_TYPE storeElem);
 
@@ -239,10 +189,10 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 		httpProxy.setWriter(dataWriter);
 
 		JsonReader<RESULT_LIST, RESULT_LIST> jsonReader = new JsonReader<>(factory, getListResultClass());
-		PagingLoader<FilterPagingLoadConfig, RESULT_LIST> listLoader = new PagingLoader<FilterPagingLoadConfig, RESULT_LIST>(httpProxy, jsonReader){
+		PagingLoader<FilterPagingLoadConfig, RESULT_LIST> listLoader = new PagingLoader<FilterPagingLoadConfig, RESULT_LIST>(
+				httpProxy, jsonReader) {
 			@Override
-			public void addSortInfo(SortInfo sortInfo)
-			{
+			public void addSortInfo(SortInfo sortInfo) {
 				final SortInfo as = factory.getSortInfo().as();
 				as.setSortField(sortInfo.getSortField());
 				as.setSortDir(sortInfo.getSortDir());
