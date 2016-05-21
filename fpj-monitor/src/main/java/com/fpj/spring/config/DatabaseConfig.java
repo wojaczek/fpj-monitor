@@ -29,7 +29,7 @@ public class DatabaseConfig {
 	private String driverClassName;
 	@Value("${url}")
 	private String dbUrl;
-	@Value("${username}")
+	@Value("${user}")
 	private String username;
 	@Value("${password}")
 	private String password;

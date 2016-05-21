@@ -35,3 +35,9 @@ h1 {
 #closeButton {
   margin: 15px 6px 6px;
 }
+
+.loginPanel{
+	margin-left: auto;
+    margin-right: auto;
+	
+}

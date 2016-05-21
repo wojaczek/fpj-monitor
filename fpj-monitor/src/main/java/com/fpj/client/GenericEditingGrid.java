@@ -59,6 +59,7 @@ public abstract class GenericEditingGrid<MODEL_TYPE extends IIdentifiableDto, MO
 		columnConfigs.add(createDeleteButton());
 		columnModel = new ColumnModel<MODEL_TYPE>(columnConfigs);
 		basicGrid = new Grid<MODEL_TYPE>(listStore, columnModel);
+		basicGrid.setHeight(300);
 		editingGrid = new GridRowEditing<MODEL_TYPE>(basicGrid);
 
 		// editingGrid.setClicksToEdit(ClicksToEdit.ONE);

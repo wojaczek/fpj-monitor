@@ -8,6 +8,8 @@ import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -22,6 +24,8 @@ import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.PropertyAccess;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.loader.JsonReader;
+import com.sencha.gxt.widget.core.client.event.BeforeShowEvent;
+import com.sencha.gxt.widget.core.client.event.BeforeShowEvent.BeforeShowHandler;
 import com.sencha.gxt.widget.core.client.form.ComboBox;
 import com.sencha.gxt.widget.core.client.form.DateField;
 import com.sencha.gxt.widget.core.client.form.DateTimePropertyEditor;
@@ -80,36 +84,49 @@ public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmplo
 		final ListStore<ICompanyDto> store = new ListStore<ICompanyDto>(companyProperties.id());		
 		ComboBox<ICompanyDto> companyComboBox = new ComboBox<ICompanyDto>(store, companyProperties.companyName());
 		companyComboBox.setAllowBlank(true);
-		configurers.add(new EditorConfigurer<IEmployeeDto, ICompanyDto>(companyNameColumn, companyComboBox));
-		columnConfig.add(companyNameColumn);
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,  "spring/company/list");
-		builder.setHeader("Accept", "application/json");
-		builder.setHeader("Content-Type", "application/json");
-		try {
-			builder.sendRequest(null, new RequestCallback() {
-				@Override
-				public void onResponseReceived(Request request, Response response) {
-					if (response.getStatusCode() == 200) {
-						JsonReader<ICompanyPagingLoadResult, ICompanyPagingLoadResult> reader = new JsonReader<ICompanyPagingLoadResult, ICompanyPagingLoadResult>(companyFactory, ICompanyPagingLoadResult.class);
-						ICompanyPagingLoadResult result = reader.read(null, response.getText());
-						store.addAll(result.getData());
-					} else {
-					}
+		companyComboBox.addKeyPressHandler(new KeyPressHandler() {
+			
+			@Override
+			public void onKeyPress(KeyPressEvent event) {
+				RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,  "spring/company/list");
+				builder.setHeader("Accept", "application/json");
+				builder.setHeader("Content-Type", "application/json");
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						@Override
+						public void onResponseReceived(Request request, Response response) {
+							if (response.getStatusCode() == 200) {
+								JsonReader<ICompanyPagingLoadResult, ICompanyPagingLoadResult> reader = new JsonReader<ICompanyPagingLoadResult, ICompanyPagingLoadResult>(companyFactory, ICompanyPagingLoadResult.class);
+								ICompanyPagingLoadResult result = reader.read(null, response.getText());
+								store.clear();
+								store.addAll(result.getData());
+							} else {
+							}
+						}
+
+						@Override
+						public void onError(Request request, Throwable exception) {
+							// TODO Auto-generated method stub
+						}
+					});
+				} catch (RequestException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 
-				@Override
-				public void onError(Request request, Throwable exception) {
-					// TODO Auto-generated method stub
-				}
-			});
-		} catch (RequestException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
-		
-		
-		
+							
+			}
+		});
+		companyComboBox.addBeforeShowHandler(new BeforeShowHandler() {
+			
+			@Override
+			public void onBeforeShow(BeforeShowEvent event) {
+					
+			}
+		});
+		configurers.add(new EditorConfigurer<IEmployeeDto, ICompanyDto>(companyNameColumn, companyComboBox));
+		columnConfig.add(companyNameColumn);
+			
 		ColumnConfig<IEmployeeDto, Date> visaExpiryDateColumn = new ColumnConfig<>(properties.visaExpiredDate(), 150,
 				getConstants().visaExpirtyDate());
 		visaExpiryDateColumn.setCell(new DateCell( DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT)));

@@ -2,6 +2,7 @@ package com.fpj.spring.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +26,7 @@ public abstract class GenericController<DTO extends IIdentifiableDto, LIST_RESUL
 	}
 
 	@RequestMapping(value = "list", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured("ROLE_USER")
 	public @ResponseBody LIST_RESULT listAllFiltered(@RequestBody FilterPagingLoadConfigBean loadConfig) {
 		return getService().list(loadConfig);
 	}
