@@ -2,10 +2,10 @@ package com.fpj.spring.dtos;
 
 import java.util.Date;
 
-import com.fpj.client.ICompanyDto;
-import com.fpj.client.IEmployeeDto;
+import com.fpj.client.dtos.ICompanyDto;
+import com.fpj.client.dtos.IEmployeeDto;
 
-public class EmployeeDto extends IDentifiableDto implements IEmployeeDto{
+public class EmployeeDto extends IdentifiableDto implements IEmployeeDto{
 	private String firstName;
 	private String lastName;
 	private ICompanyDto company;

@@ -8,26 +8,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fpj.client.dtos.ICompanyDto;
-import com.fpj.spring.dtos.CompanyPagingLoadResultBean;
+import com.fpj.client.dtos.IEmployeeDto;
+import com.fpj.client.dtos.IUserDto;
+import com.fpj.spring.dtos.UserPagingLoadResultBean;
 import com.fpj.spring.exception.NotFoundException;
-import com.fpj.spring.service.ICompanyService;
-import com.fpj.spring.service.IGenericService;
+import com.fpj.spring.service.IUserService;
+
 @Controller
-@RequestMapping("company")
-public class CompanyController extends GenericController<ICompanyDto, CompanyPagingLoadResultBean>{
+@RequestMapping("user")
+public class UserController extends GenericController<IUserDto, UserPagingLoadResultBean> {
 
 	@Autowired
-	ICompanyService service;
-	
+	private IUserService service;
+
 	@Override
-	protected IGenericService<ICompanyDto, CompanyPagingLoadResultBean, ?> getService() {
+	protected IUserService getService() {
 		return service;
 	}
 
+
 	@RequestMapping(value = "update", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ICompanyDto saveChanges(@RequestBody ICompanyDto dto) throws NotFoundException{
+	public @ResponseBody IUserDto saveChanges(@RequestBody IUserDto dto) throws NotFoundException{
 		return super.save(dto);
 	}
+	
 	
 }

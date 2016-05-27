@@ -12,7 +12,7 @@
 		<spring.version>4.2.5.RELEASE</spring.version>
 		<spring.security.version>4.1.0.RELEASE</spring.security.version>
 		<gxt.version>4.0.0</gxt.version>
-		<postgres.version>9.4.1208.jre7</postgres.version>
+		<postgres.version>9.3-1104-jdbc4</postgres.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -127,6 +127,7 @@
 				<version>${gwt.version}</version>
 				<configuration>
 					<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
+					<draftCompile>true</draftCompile>
 				</configuration>
 			</plugin>
 			<plugin>

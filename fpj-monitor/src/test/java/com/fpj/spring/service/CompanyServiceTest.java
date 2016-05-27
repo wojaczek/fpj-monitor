@@ -19,7 +19,7 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 @ContextConfiguration(loader=AnnotationConfigContextLoader.class, classes={DatabaseConfig.class, PropertyConfiguration.class, CompanyService.class})
 public class CompanyServiceTest {
 @Autowired
-CompanyService companyService;
+ICompanyService companyService;
 @Autowired
 CompanyRepository companyRepository;
 	@Test

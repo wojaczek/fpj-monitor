@@ -8,20 +8,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fpj.client.IEmployeeDto;
+import com.fpj.client.dtos.IEmployeeDto;
 import com.fpj.spring.dtos.EmployeePagingLoadResultBean;
 import com.fpj.spring.exception.NotFoundException;
-import com.fpj.spring.service.EmployeeService;
-import com.fpj.spring.service.GenericService;
+import com.fpj.spring.service.IEmployeeService;
+import com.fpj.spring.service.IGenericService;
 
 @Controller
 @RequestMapping("employee")
 public class EmployeeController extends GenericController<IEmployeeDto, EmployeePagingLoadResultBean> {
 
 	@Autowired
-	EmployeeService employeeService;
+	IEmployeeService employeeService;
 	@Override
-	protected GenericService<IEmployeeDto, EmployeePagingLoadResultBean, ?> getService() {
+	protected IGenericService<IEmployeeDto, EmployeePagingLoadResultBean, ?> getService() {
 		return employeeService;
 	}
 	

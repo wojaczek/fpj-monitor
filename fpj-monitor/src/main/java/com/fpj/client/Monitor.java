@@ -1,5 +1,8 @@
 package com.fpj.client;
 
+import com.fpj.client.grid.CompanyEditingGrid;
+import com.fpj.client.grid.EmployeeEditingGrid;
+import com.fpj.client.grid.UserEditingGrid;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -35,6 +38,7 @@ public class Monitor implements EntryPoint {
 	private final ContentPanel contentPanel = new ContentPanel();
 	private CompanyEditingGrid companyGrid;
 	private MonitorConstants constants = GWT.create(MonitorConstants.class);
+	private UserEditingGrid userGrid;
 	
 	public void onModuleLoad() {
 		RequestBuilder loginRequestBuilder = new RequestBuilder(RequestBuilder.GET, "spring/login/test");
@@ -137,9 +141,9 @@ public class Monitor implements EntryPoint {
 	public Container createMenuPanel(){
 		Container menuPanel = new VerticalLayoutContainer();
 		ToggleGroup menuGroup = new ToggleGroup();
+
 		final ToggleButton buttonEmp = new ToggleButton("Employees");
-		buttonEmp.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-			
+		buttonEmp.addValueChangeHandler(new ValueChangeHandler<Boolean>() {	
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				if (event.getValue()){
@@ -148,9 +152,9 @@ public class Monitor implements EntryPoint {
 				}
 			}
 		});
-		final ToggleButton buttonNone = new ToggleButton("Companies");
-		buttonNone.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-			
+		
+		final ToggleButton buttonCompanies = new ToggleButton("Companies");
+		buttonCompanies.addValueChangeHandler(new ValueChangeHandler<Boolean>() {	
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				if (event.getValue()){
@@ -158,29 +162,47 @@ public class Monitor implements EntryPoint {
 					contentPanel.add(getCompanyGrid());
 				}
 			}
-
-			
+		});
+		
+		final ToggleButton buttonUsers = new ToggleButton("Users");
+		buttonUsers.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				if (event.getValue()){
+					contentPanel.clear();
+					contentPanel.add(getUsersGrid());
+				}
+			}
 		});
 		
 		menuPanel.add(buttonEmp);
-		menuPanel.add(buttonNone);
+		menuPanel.add(buttonCompanies);
+		menuPanel.add(buttonUsers);
 		
 		menuGroup.add(buttonEmp);
-		menuGroup.add(buttonNone);
+		menuGroup.add(buttonCompanies);
+		menuGroup.add(buttonUsers);
 		return menuPanel;
 	}
 
-	public EmployeeEditingGrid getEmpGrid() {
+	private EmployeeEditingGrid getEmpGrid() {
 		if (empGrid == null){
 			empGrid = new EmployeeEditingGrid("spring/employee");
 		}
 		return empGrid;
 	}
+	
 	private CompanyEditingGrid getCompanyGrid() {
 		if (companyGrid==null){
 			companyGrid = new CompanyEditingGrid("spring/company");
 		}
 		return companyGrid;
 	}
-
+	
+	private UserEditingGrid getUsersGrid() {
+		if (userGrid==null){
+			userGrid = new UserEditingGrid("spring/user");
+		}
+		return userGrid;
+	}
 }

@@ -11,7 +11,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fpj.client.IIdentifiableDto;
+import com.fpj.client.dtos.IIdentifiableDto;
 import com.fpj.spring.entities.IdentifiableEntity;
 import com.fpj.spring.exception.NotFoundException;
 import com.sencha.gxt.data.shared.SortDir;
@@ -19,8 +19,12 @@ import com.sencha.gxt.data.shared.SortInfoBean;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 
-public abstract class GenericService<DTO_TYPE extends IIdentifiableDto, LIST_RESULT extends PagingLoadResultBean<DTO_TYPE>, ENTITY extends IdentifiableEntity> {
+public abstract class GenericService<DTO_TYPE extends IIdentifiableDto, LIST_RESULT extends PagingLoadResultBean<DTO_TYPE>, ENTITY extends IdentifiableEntity> implements IGenericService<DTO_TYPE, LIST_RESULT, ENTITY> {
 
+	/* (non-Javadoc)
+	 * @see com.fpj.spring.service.IGenericService#list(com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean)
+	 */
+	@Override
 	@Transactional
 	public LIST_RESULT list(FilterPagingLoadConfigBean loadConfig) {
 		PageRequest page;
@@ -48,6 +52,10 @@ public abstract class GenericService<DTO_TYPE extends IIdentifiableDto, LIST_RES
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see com.fpj.spring.service.IGenericService#update(DTO_TYPE)
+	 */
+	@Override
 	@Transactional
 	public void update(DTO_TYPE dto) throws NotFoundException{
 		ENTITY entity = getRepository().findOne(dto.getId());
@@ -79,6 +87,10 @@ public abstract class GenericService<DTO_TYPE extends IIdentifiableDto, LIST_RES
 	protected abstract JpaRepository<ENTITY, Integer> getRepository();
 
 
+	/* (non-Javadoc)
+	 * @see com.fpj.spring.service.IGenericService#createEmpty()
+	 */
+	@Override
 	public DTO_TYPE createEmpty() {
 		ENTITY entity = createEntity();
 		getRepository().saveAndFlush(entity);
@@ -86,6 +98,10 @@ public abstract class GenericService<DTO_TYPE extends IIdentifiableDto, LIST_RES
 	}
 
 
+	/* (non-Javadoc)
+	 * @see com.fpj.spring.service.IGenericService#list()
+	 */
+	@Override
 	public LIST_RESULT list() {
 		List<ENTITY> allEntities = getRepository().findAll();
 		LIST_RESULT result = createResult();
@@ -94,6 +110,10 @@ public abstract class GenericService<DTO_TYPE extends IIdentifiableDto, LIST_RES
 	}
 
 
+	/* (non-Javadoc)
+	 * @see com.fpj.spring.service.IGenericService#delete(java.lang.Integer)
+	 */
+	@Override
 	public void delete(Integer id) {
 		getRepository().delete(id);
 	}

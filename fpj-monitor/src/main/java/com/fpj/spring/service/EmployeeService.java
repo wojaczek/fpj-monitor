@@ -4,18 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import com.fpj.client.IEmployeeDto;
+import com.fpj.client.dtos.IEmployeeDto;
 import com.fpj.spring.dtos.EmployeeDto;
 import com.fpj.spring.dtos.EmployeePagingLoadResultBean;
 import com.fpj.spring.entities.EntEmployee;
 import com.fpj.spring.repository.CompanyRepository;
 import com.fpj.spring.repository.EmployeeRepository;
 @Service
-public class EmployeeService extends GenericService<IEmployeeDto, EmployeePagingLoadResultBean, EntEmployee> {
+public class EmployeeService extends GenericService<IEmployeeDto, EmployeePagingLoadResultBean, EntEmployee> implements IEmployeeService {
 	@Autowired
 	EmployeeRepository repository;
 	@Autowired
-	CompanyService companyService;
+	ICompanyService companyService;
 	@Autowired
 	CompanyRepository companyRepository;
 	

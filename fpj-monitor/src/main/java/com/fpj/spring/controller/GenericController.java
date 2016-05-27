@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.fpj.client.IIdentifiableDto;
+import com.fpj.client.dtos.IIdentifiableDto;
 import com.fpj.spring.exception.NotFoundException;
-import com.fpj.spring.service.GenericService;
+import com.fpj.spring.service.IGenericService;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 
@@ -51,5 +51,5 @@ public abstract class GenericController<DTO extends IIdentifiableDto, LIST_RESUL
 			return dto;
 	}
 
-	protected abstract GenericService<DTO, LIST_RESULT, ?> getService();
+	protected abstract IGenericService<DTO, LIST_RESULT, ?> getService();
 }

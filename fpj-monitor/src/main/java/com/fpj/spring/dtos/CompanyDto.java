@@ -1,8 +1,8 @@
 package com.fpj.spring.dtos;
 
-import com.fpj.client.ICompanyDto;
+import com.fpj.client.dtos.ICompanyDto;
 
-public class CompanyDto extends IDentifiableDto implements ICompanyDto {
+public class CompanyDto extends IdentifiableDto implements ICompanyDto {
 
 	private String companyName;
 
