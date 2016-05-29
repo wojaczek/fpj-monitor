@@ -3,6 +3,7 @@ package com.fpj.spring.dtos;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fpj.client.dtos.EntUserRole;
 import com.fpj.client.dtos.IUserDto;
 
 public class UserDto extends IdentifiableDto implements IUserDto {
@@ -11,7 +12,7 @@ public class UserDto extends IdentifiableDto implements IUserDto {
 	private String email;
 	private String password;
 	private String passwordRepeat;
-	private List<String> roles = new ArrayList<String>();
+	private List<EntUserRole> roles = new ArrayList<EntUserRole>();
 	private Boolean enabled;
 
 	@Override
@@ -55,12 +56,12 @@ public class UserDto extends IdentifiableDto implements IUserDto {
 	}
 
 	@Override
-	public List<String> getRoles() {
+	public List<EntUserRole> getRoles() {
 		return roles;
 	}
 
 	@Override
-	public void setRoles(List<String> roles) {
+	public void setRoles(List<EntUserRole> roles) {
 		this.roles=roles;
 	}
 

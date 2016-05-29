@@ -33,5 +33,10 @@ public interface UserGridConstants extends Messages, MinLengthMessages, RegExMes
 	String falseString();
 	@DefaultMessage("Aktywne role")
 	String roles();
+	@DefaultMessage("Pracownik FPJ")
+	String roleUser();
+	
+	@DefaultMessage("Administrator")
+	String roleAdmin();
 	
 }

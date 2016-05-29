@@ -8,4 +8,6 @@ import com.fpj.spring.entities.EntUser;
 
 public interface IUserService extends IGenericService<IUserDto, UserPagingLoadResultBean, EntUser>, UserDetailsService {
 
+	void insertAdmin();
+
 }

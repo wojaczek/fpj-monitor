@@ -3,6 +3,7 @@ package com.fpj.client.grid;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fpj.client.dtos.EntUserRole;
 import com.fpj.client.dtos.IUserDto;
 import com.fpj.client.dtos.factories.IUserAutoBeanFactory;
 import com.fpj.client.dtos.loadResults.IUserPagingLoadResult;
@@ -30,7 +31,8 @@ import com.sencha.gxt.widget.core.client.form.validator.MinLengthValidator;
 import com.sencha.gxt.widget.core.client.form.validator.RegExValidator;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 
-public class UserEditingGrid extends GenericEditingGrid<IUserDto, IUserDtoProperties, IUserPagingLoadResult, IUserAutoBeanFactory>{
+public class UserEditingGrid extends
+		GenericEditingGrid<IUserDto, IUserDtoProperties, IUserPagingLoadResult, IUserAutoBeanFactory> {
 
 	private UserGridConstants constants;
 
@@ -52,6 +54,8 @@ public class UserEditingGrid extends GenericEditingGrid<IUserDto, IUserDtoProper
 		storeElem.setPassword(modifiedRecord.getValue(properties.password()));
 		storeElem.setPasswordRepeat(modifiedRecord.getValue(properties.passwordRepeat()));
 		storeElem.setEnabled(modifiedRecord.getValue(properties.enabled()));
+		GWT.log("UserEditingGrid.fillModelFromChange()" + storeElem.getRoles());
+		storeElem.setRoles(modifiedRecord.getValue(properties.roles()));
 	}
 
 	@Override
@@ -77,64 +81,66 @@ public class UserEditingGrid extends GenericEditingGrid<IUserDto, IUserDtoProper
 	@Override
 	protected List<ColumnConfig<IUserDto, ?>> createColumnConfigs() {
 		List<ColumnConfig<IUserDto, ?>> columnConfig = new ArrayList<ColumnConfig<IUserDto, ?>>();
-		ColumnConfig<IUserDto, String> usernameColumn = new ColumnConfig<>(properties.username(),	150, getConstants().username());
+		ColumnConfig<IUserDto, String> usernameColumn = new ColumnConfig<>(properties.username(), 150, getConstants().username());
 		configurers.add(new EditorConfigurer<IUserDto, String>(usernameColumn, new TextField()));
-		
-		ColumnConfig<IUserDto, String> emailColumn = new ColumnConfig<>(properties.email(),	150, getConstants().email());
+
+		ColumnConfig<IUserDto, String> emailColumn = new ColumnConfig<>(properties.email(), 150, getConstants().email());
 		final TextField emailTextField = new TextField();
-		final String EMAIL_PATTERN = 
-				"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+		final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-		
+
 		RegExValidator regExpValidator = new RegExValidator(EMAIL_PATTERN);
 		regExpValidator.setMessages(getConstants());
 		emailTextField.addValidator(regExpValidator);
 		configurers.add(new EditorConfigurer<IUserDto, String>(emailColumn, emailTextField));
-		
-		ColumnConfig<IUserDto, String> passwordColumn = new ColumnConfig<IUserDto, String>(properties.password(), 150, getConstants().password());
+
+		ColumnConfig<IUserDto, String> passwordColumn = new ColumnConfig<IUserDto, String>(properties.password(), 150,
+				getConstants().password());
 		passwordColumn.setCell(new TextCell(new SafeHtmlRenderer<String>() {
-			
+
 			@Override
 			public void render(String object, SafeHtmlBuilder builder) {
 				builder.appendEscaped("***");
 			}
-			
+
 			@Override
 			public SafeHtml render(String object) {
 				return new SafeHtmlBuilder().appendEscaped("***").toSafeHtml();
 			}
 		}));
-		
+
 		final PasswordField passwordField = new PasswordField();
 		MinLengthValidator minLenValidator = new MinLengthValidator(6);
 		minLenValidator.setMessages(getConstants());
 		passwordField.addValidator(minLenValidator);
 		configurers.add(new EditorConfigurer<IUserDto, String>(passwordColumn, passwordField));
-		
-		ColumnConfig<IUserDto, String> passwordRepeatColumn = new ColumnConfig<IUserDto, String>(properties.passwordRepeat(), 150, getConstants().passwordRepeat());
+
+		ColumnConfig<IUserDto, String> passwordRepeatColumn = new ColumnConfig<IUserDto, String>(properties.passwordRepeat(),
+				150, getConstants().passwordRepeat());
 		passwordRepeatColumn.setCell(new TextCell(new SafeHtmlRenderer<String>() {
-			
+
 			@Override
 			public void render(String object, SafeHtmlBuilder builder) {
 				builder.appendEscaped("***");
 			}
-			
+
 			@Override
 			public SafeHtml render(String object) {
 				return new SafeHtmlBuilder().appendEscaped("***").toSafeHtml();
 			}
 		}));
-		
+
 		final PasswordField passwordRepeatField = new PasswordField();
 		configurers.add(new EditorConfigurer<IUserDto, String>(passwordRepeatColumn, passwordRepeatField));
-		
+
 		passwordRepeatField.addValidator(new Validator<String>() {
 			@Override
 			public List<EditorError> validate(Editor<String> editor, String value) {
-				if ((value == null  || value.isEmpty()) && (passwordField.getValue()==null || passwordField.getValue().isEmpty())){
+				if ((value == null || value.isEmpty())
+						&& (passwordField.getValue() == null || passwordField.getValue().isEmpty())) {
 					return null;
 				}
-				if (value.equals(passwordField.getValue())){
+				if (value.equals(passwordField.getValue())) {
 					return null;
 				} else {
 					List<EditorError> result = new ArrayList<EditorError>();
@@ -143,14 +149,15 @@ public class UserEditingGrid extends GenericEditingGrid<IUserDto, IUserDtoProper
 				}
 			}
 		});
-		
+
 		passwordField.addValidator(new Validator<String>() {
 			@Override
 			public List<EditorError> validate(Editor<String> editor, String value) {
-				if ((value == null  || value.isEmpty()) && (passwordRepeatField.getValue()==null || passwordRepeatField.getValue().isEmpty())){
+				if ((value == null || value.isEmpty())
+						&& (passwordRepeatField.getValue() == null || passwordRepeatField.getValue().isEmpty())) {
 					return null;
 				}
-				if (value.equals(passwordRepeatField.getValue())){
+				if (value.equals(passwordRepeatField.getValue())) {
 					return null;
 				} else {
 					List<EditorError> result = new ArrayList<EditorError>();
@@ -159,65 +166,79 @@ public class UserEditingGrid extends GenericEditingGrid<IUserDto, IUserDtoProper
 				}
 			}
 		});
-		
-		ColumnConfig<IUserDto, Boolean> enableColumn = new ColumnConfig<IUserDto, Boolean>(properties.enabled(), 100, getConstants().enabled());
-		enableColumn.setCell(new AbstractCell<Boolean>(new String[0]){
+
+		ColumnConfig<IUserDto, Boolean> enableColumn = new ColumnConfig<IUserDto, Boolean>(properties.enabled(), 100,
+				getConstants().enabled());
+		enableColumn.setCell(new AbstractCell<Boolean>(new String[0]) {
 
 			@Override
 			public void render(Context context, Boolean value, SafeHtmlBuilder sb) {
-				if (value==null || !value){
+				if (value == null || !value) {
 					sb.appendEscaped(getConstants().falseString());
-				}else{
+				} else {
 					sb.appendEscaped(getConstants().trueString());
 				}
-				
+
 			}
-			
+
 		});
 		configurers.add(new EditorConfigurer<IUserDto, Boolean>(enableColumn, new CheckBox()));
-		
+
 		final CheckBox user = new CheckBox();
-		user.setBoxLabel("user");
+		user.setBoxLabel(constants.roleUser());
 		final CheckBox admin = new CheckBox();
-		admin.setBoxLabel("admin");
-		ColumnConfig<IUserDto, List<String>>rolesColumn = new ColumnConfig<IUserDto, List<String>>(properties.roles(), 200, getConstants().roles());
+		admin.setBoxLabel(constants.roleAdmin());
+		ColumnConfig<IUserDto, List<EntUserRole>> rolesColumn = new ColumnConfig<IUserDto, List<EntUserRole>>(properties.roles(),
+				200, getConstants().roles());
+		rolesColumn.setCell(new AbstractCell<List<EntUserRole>>(new String[0]) {
+
+			@Override
+			public void render(Context context, List<EntUserRole> value, SafeHtmlBuilder sb) {
+				for (EntUserRole role : value) {
+					switch (role) {
+					case ROLE_ADMIN:
+						sb.appendEscaped(constants.roleAdmin()).appendHtmlConstant("<br/>");
+						break;
+					case ROLE_USER:
+						sb.appendEscaped(constants.roleUser()).appendHtmlConstant("<br/>");
+					}
+				}
+			}
+
+		});
 		ContentPanel contentPanel = new ContentPanel();
 		contentPanel.setHeaderVisible(false);
 		VerticalLayoutContainer verticalPanel = new VerticalLayoutContainer();
 		contentPanel.add(verticalPanel);
 		verticalPanel.add(user);
 		verticalPanel.add(admin);
-		AdapterField<List<String>> rolesField = new AdapterField<List<String>>(contentPanel) {
-			List<String> roles;
+		AdapterField<List<EntUserRole>> rolesField = new AdapterField<List<EntUserRole>>(contentPanel) {
 			@Override
-			public void setValue(List<String> value) {
-				this.roles=value!=null?value:new ArrayList<String>();
-				if (roles.contains("ROLE_USER")){
-					user.setValue(true);
-				}
-				if (roles.contains("ROLE_ADMIN")){
-					admin.setValue(true);
+			public void setValue(List<EntUserRole> value) {
+				if (value != null) {
+					if (value.contains(EntUserRole.ROLE_USER)) {
+						user.setValue(true);
+					}
+					if (value.contains(EntUserRole.ROLE_ADMIN)) {
+						admin.setValue(true);
+					}
 				}
 			}
 
 			@Override
-			public List<String> getValue() {
-				if (roles==null){
-					roles = new ArrayList<String>();
+			public List<EntUserRole> getValue() {
+				List<EntUserRole> roles = new ArrayList<EntUserRole>();
+				if (user.getValue()) {
+					roles.add(EntUserRole.ROLE_USER);
 				}
-				roles.clear();
-				if (user.getValue()){
-					roles.add("ROLE_USER");
-				}
-				if (admin.getValue()){
-					roles.add("ROLE_ADMIN");
+				if (admin.getValue()) {
+					roles.add(EntUserRole.ROLE_ADMIN);
 				}
 				return roles;
 			}
 		};
-		configurers.add(new EditorConfigurer<IUserDto, List<String>>(rolesColumn, rolesField));
-		
-		
+		configurers.add(new EditorConfigurer<IUserDto, List<EntUserRole>>(rolesColumn, rolesField));
+
 		columnConfig.add(usernameColumn);
 		columnConfig.add(rolesColumn);
 		columnConfig.add(emailColumn);
@@ -227,11 +248,11 @@ public class UserEditingGrid extends GenericEditingGrid<IUserDto, IUserDtoProper
 		return columnConfig;
 	}
 
-	private UserGridConstants getConstants(){
-		if (constants == null){
+	private UserGridConstants getConstants() {
+		if (constants == null) {
 			constants = GWT.create(UserGridConstants.class);
 		}
 		return constants;
 	}
-	
+
 }

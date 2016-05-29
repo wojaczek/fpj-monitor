@@ -35,6 +35,12 @@ public class EntEmployee implements IdentifiableEntity{
 	@Column(name = "visa_expired_date")
 	private Date visaExpiredDate;
 
+	@Column(name = "work_permission_expiry_date")
+	private Date workPermissionExpiryDate;
+	
+	@Column(name = "statement_expiry_date")
+	private Date statementExpiryDate;
+	
 	@Override
 	public Integer getId() {
 		return id;
@@ -75,6 +81,22 @@ public class EntEmployee implements IdentifiableEntity{
 
 	public void setVisaExpiredDate(Date visaExpiredDate) {
 		this.visaExpiredDate = visaExpiredDate;
+	}
+
+	public Date getWorkPermissionExpiryDate() {
+		return workPermissionExpiryDate;
+	}
+
+	public void setWorkPermissionExpiryDate(Date workPermissionExpiryDate) {
+		this.workPermissionExpiryDate = workPermissionExpiryDate;
+	}
+
+	public Date getStatementExpiryDate() {
+		return statementExpiryDate;
+	}
+
+	public void setStatementExpiryDate(Date statementExpiryDate) {
+		this.statementExpiryDate = statementExpiryDate;
 	}
 	
 	

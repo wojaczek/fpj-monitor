@@ -32,17 +32,21 @@ public abstract class GenericController<DTO extends IIdentifiableDto, LIST_RESUL
 	}
 	
 	@RequestMapping(value = "list", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured("ROLE_USER")
 	public @ResponseBody LIST_RESULT listAll() {
 		return getService().list();
 	}
 
 	@RequestMapping(value = "create", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured("ROLE_USER")
 	public @ResponseBody DTO create() {
 		return getService().createEmpty();
 	}
 
 	@RequestMapping(value="delete/{id}", method= RequestMethod.GET,  consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured("ROLE_USER")
 	public @ResponseBody void delete(@PathVariable Integer id){
+		System.out.println("GenericController.delete()" + id);
 		getService().delete(id);
 	}
 	

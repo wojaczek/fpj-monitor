@@ -15,5 +15,10 @@ public interface IEmployeeDto extends IIdentifiableDto {
 
 	String getFirstName();
 	void setFirstName(String firstName);
-
+	
+	Date getWorkPermissionExpiryDate();
+	void setWorkPermissionExpiryDate(Date workPermissionExpiryDate);
+	
+	Date getStatementExpiryDate();
+	void setStatementExpiryDate(Date statementExpiryDate);
 }

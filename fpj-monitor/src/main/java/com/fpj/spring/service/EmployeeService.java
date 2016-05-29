@@ -29,6 +29,8 @@ public class EmployeeService extends GenericService<IEmployeeDto, EmployeePaging
 		} else{
 			entity.setCompany(null);
 		}
+		entity.setWorkPermissionExpiryDate(dto.getWorkPermissionExpiryDate());
+		entity.setStatementExpiryDate(dto.getStatementExpiryDate());
 	}
 
 	@Override
@@ -44,6 +46,8 @@ public class EmployeeService extends GenericService<IEmployeeDto, EmployeePaging
 		dto.setFirstName(entity.getFirstName());
 		dto.setLastName(entity.getLastName());
 		dto.setVisaExpiredDate(entity.getVisaExpiredDate());
+		dto.setWorkPermissionExpiryDate(entity.getWorkPermissionExpiryDate());
+		dto.setStatementExpiryDate(entity.getStatementExpiryDate());
 		return dto;
 	}
 

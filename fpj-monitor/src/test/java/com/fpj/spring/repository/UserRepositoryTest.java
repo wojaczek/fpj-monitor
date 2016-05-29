@@ -10,10 +10,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fpj.client.dtos.EntUserRole;
 import com.fpj.spring.config.DatabaseConfig;
 import com.fpj.spring.config.PropertyConfiguration;
 import com.fpj.spring.entities.EntUser;
-import com.fpj.spring.entities.EntUser.EntUserRole;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)

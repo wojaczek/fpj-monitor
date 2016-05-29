@@ -15,15 +15,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.fpj.client.dtos.EntUserRole;
+
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "username"))
 public class EntUser implements IdentifiableEntity{
 	
-	
-	public enum EntUserRole {
-		ROLE_USER, ROLE_ADMIN
-	}
-
 	@Id
 	@SequenceGenerator(name="user_seq", sequenceName="user_seq")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="user_seq")

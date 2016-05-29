@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -29,6 +30,7 @@ import com.sencha.gxt.data.shared.loader.FilterConfig;
 @Configuration
 @EnableWebMvc
 @ComponentScan("com.fpj.spring.controller")
+@EnableGlobalMethodSecurity(securedEnabled=true)
 public class WebappConfig extends WebMvcConfigurerAdapter {
 
 	@Bean
@@ -48,7 +50,7 @@ public class WebappConfig extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addViewController("/login").setViewName("login");
+		registry.addViewController("/spring/login/error");
 		registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
 	}
 

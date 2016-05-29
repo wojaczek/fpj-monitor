@@ -18,5 +18,8 @@ public interface IEmployeeDtoProperties extends IdPropertyAccess<IEmployeeDto> {
 	ValueProvider<IEmployeeDto, ICompanyDto> company();
 
 	ValueProvider<IEmployeeDto, Date> visaExpiredDate();
-
+	
+	ValueProvider<IEmployeeDto, Date> statementExpiryDate();
+	
+	ValueProvider<IEmployeeDto, Date> workPermissionExpiryDate();
 }

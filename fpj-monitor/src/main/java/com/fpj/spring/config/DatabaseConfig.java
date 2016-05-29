@@ -71,6 +71,7 @@ public class DatabaseConfig {
 		properties.put("hibernate.hbm2ddl.auto", hbm2ddl);
 		properties.put("hibernate.dialect", databaseDialect);
 		properties.put("hibernate.show_sql", true);
+		properties.put("hibernate.temp.use_jdbc_metadata_defaults","false");
 		return properties;
 	}
 }

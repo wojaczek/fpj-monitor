@@ -16,7 +16,7 @@ public class EntCompany implements IdentifiableEntity{
 	@SequenceGenerator(name="company_seq", sequenceName="company_seq")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="company_seq")
 	private Integer id;
-	@Column(length=128)
+	@Column(length=128, name="companyname")
 	private String companyName;
 	@Override
 	public Integer getId() {

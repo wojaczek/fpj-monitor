@@ -11,11 +11,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fpj.client.dtos.EntUserRole;
 import com.fpj.spring.config.DatabaseConfig;
 import com.fpj.spring.config.PropertyConfiguration;
 import com.fpj.spring.dtos.UserPagingLoadResultBean;
 import com.fpj.spring.entities.EntUser;
-import com.fpj.spring.entities.EntUser.EntUserRole;
 import com.fpj.spring.repository.UserRepository;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 

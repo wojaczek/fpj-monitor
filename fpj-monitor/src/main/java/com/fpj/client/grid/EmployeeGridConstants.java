@@ -13,6 +13,12 @@ public interface EmployeeGridConstants extends Constants {
 	@DefaultStringValue("Nazwa firmy")
 	String companyName();
 	
-	@DefaultStringValue("Data wygaśnięcia wizy")
+	@DefaultStringValue("Data wygaśnięcia wizy/karty pobytu")
 	String visaExpirtyDate();
+	
+	@DefaultStringValue("Data wygaśnięcia pozwolenia na pracę")
+	String workPermissionExpiryDate();
+	
+	@DefaultStringValue("Data wygaśnięcia oświadczenia")
+	String statementExpiryDate();
 }

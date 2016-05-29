@@ -15,8 +15,8 @@ public interface IUserDto extends IIdentifiableDto {
 	String getPasswordRepeat();
 	void setPasswordRepeat(String passwordRepeat);
 	
-	List<String> getRoles();
-	void setRoles(List<String> roles);
+	List<EntUserRole> getRoles();
+	void setRoles(List<EntUserRole> roles);
 	
 	Boolean getEnabled();
 	void setEnabled(Boolean enabled);

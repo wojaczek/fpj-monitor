@@ -41,20 +41,22 @@ import com.sencha.gxt.widget.core.client.form.DateTimePropertyEditor;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 
-public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmployeeDtoProperties, IEmployeePagingLoadResult, IEmployeeAutoBeanFactory> {
-	
-	interface ICompanyDtoLabelProvider extends PropertyAccess<ICompanyDto>{
+public class EmployeeEditingGrid extends
+		GenericEditingGrid<IEmployeeDto, IEmployeeDtoProperties, IEmployeePagingLoadResult, IEmployeeAutoBeanFactory> {
+
+	interface ICompanyDtoLabelProvider extends PropertyAccess<ICompanyDto> {
 		LabelProvider<ICompanyDto> companyName();
+
 		ModelKeyProvider<ICompanyDto> id();
 	}
-	
+
 	public EmployeeEditingGrid(String urlPrefix) {
 		super(urlPrefix);
 	}
-	
+
 	private EmployeeGridConstants constants;
 	private ICompanyAutoBeanFactory companyFactory = GWT.create(ICompanyAutoBeanFactory.class);
-	
+
 	@Override
 	protected IEmployeeAutoBeanFactory createFactory() {
 		return GWT.create(IEmployeeAutoBeanFactory.class);
@@ -66,38 +68,41 @@ public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmplo
 	}
 
 	@Override
-	protected List<ColumnConfig<IEmployeeDto,?>> createColumnConfigs() {
+	protected List<ColumnConfig<IEmployeeDto, ?>> createColumnConfigs() {
 		List<ColumnConfig<IEmployeeDto, ?>> columnConfig = new ArrayList<ColumnConfig<IEmployeeDto, ?>>();
-		
-		ColumnConfig<IEmployeeDto, String> firstNameColumn = new ColumnConfig<>(properties.firstName(),	150, getConstants().firstName());
+
+		ColumnConfig<IEmployeeDto, String> firstNameColumn = new ColumnConfig<>(properties.firstName(), 150, getConstants()
+				.firstName());
 		configurers.add(new EditorConfigurer<IEmployeeDto, String>(firstNameColumn, new TextField()));
 		columnConfig.add(firstNameColumn);
 
-		ColumnConfig<IEmployeeDto, String> lastNameColumn = new ColumnConfig<>(properties.lastName(), 150, getConstants().lastName());
+		ColumnConfig<IEmployeeDto, String> lastNameColumn = new ColumnConfig<>(properties.lastName(), 150, getConstants()
+				.lastName());
 		configurers.add(new EditorConfigurer<IEmployeeDto, String>(lastNameColumn, new TextField()));
 		columnConfig.add(lastNameColumn);
 
 		ICompanyDtoLabelProvider companyProperties = GWT.create(ICompanyDtoLabelProvider.class);
-		ColumnConfig<IEmployeeDto, ICompanyDto> companyNameColumn = new ColumnConfig<>(properties.company(), 150, getConstants().companyName());
-		Cell<ICompanyDto> cell = new AbstractCell<ICompanyDto>(new String []{}){
+		ColumnConfig<IEmployeeDto, ICompanyDto> companyNameColumn = new ColumnConfig<>(properties.company(), 150, getConstants()
+				.companyName());
+		Cell<ICompanyDto> cell = new AbstractCell<ICompanyDto>(new String[] {}) {
 
 			@Override
 			public void render(com.google.gwt.cell.client.Cell.Context context, ICompanyDto value, SafeHtmlBuilder sb) {
-				if (value!=null){
+				if (value != null) {
 					sb.appendEscaped(value.getCompanyName());
 				}
 			}
-			
+
 		};
-		companyNameColumn.setCell(cell );
-		final ListStore<ICompanyDto> store = new ListStore<ICompanyDto>(companyProperties.id());		
+		companyNameColumn.setCell(cell);
+		final ListStore<ICompanyDto> store = new ListStore<ICompanyDto>(companyProperties.id());
 		ComboBox<ICompanyDto> companyComboBox = new ComboBox<ICompanyDto>(store, companyProperties.companyName());
 		companyComboBox.setAllowBlank(true);
 		companyComboBox.addKeyPressHandler(new KeyPressHandler() {
-			
+
 			@Override
 			public void onKeyPress(KeyPressEvent event) {
-				RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,  "spring/company/list");
+				RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, "spring/company/list");
 				builder.setHeader("Accept", "application/json");
 				builder.setHeader("Content-Type", "application/json");
 				try {
@@ -105,7 +110,8 @@ public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmplo
 						@Override
 						public void onResponseReceived(Request request, Response response) {
 							if (response.getStatusCode() == 200) {
-								JsonReader<ICompanyPagingLoadResult, ICompanyPagingLoadResult> reader = new JsonReader<ICompanyPagingLoadResult, ICompanyPagingLoadResult>(companyFactory, ICompanyPagingLoadResult.class);
+								JsonReader<ICompanyPagingLoadResult, ICompanyPagingLoadResult> reader = new JsonReader<ICompanyPagingLoadResult, ICompanyPagingLoadResult>(
+										companyFactory, ICompanyPagingLoadResult.class);
 								ICompanyPagingLoadResult result = reader.read(null, response.getText());
 								store.clear();
 								store.addAll(result.getData());
@@ -123,28 +129,40 @@ public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmplo
 					e.printStackTrace();
 				}
 
-							
 			}
 		});
 		companyComboBox.addBeforeShowHandler(new BeforeShowHandler() {
-			
+
 			@Override
 			public void onBeforeShow(BeforeShowEvent event) {
-					
+
 			}
 		});
 		configurers.add(new EditorConfigurer<IEmployeeDto, ICompanyDto>(companyNameColumn, companyComboBox));
 		columnConfig.add(companyNameColumn);
-			
-		ColumnConfig<IEmployeeDto, Date> visaExpiryDateColumn = new ColumnConfig<>(properties.visaExpiredDate(), 150,
-				getConstants().visaExpirtyDate());
-		visaExpiryDateColumn.setCell(new DateCell( DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT)));
-		
 		
 		DateTimeFormat dateFormat = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT);
-		DateField field = new DateField(new DateTimePropertyEditor(dateFormat));
-		configurers.add(new EditorConfigurer<IEmployeeDto, Date>(visaExpiryDateColumn, field));
-		columnConfig.add(visaExpiryDateColumn);		
+		
+		ColumnConfig<IEmployeeDto, Date> visaExpiryDateColumn = new ColumnConfig<>(properties.visaExpiredDate(), 150,
+				getConstants().visaExpirtyDate());
+		visaExpiryDateColumn.setCell(new DateCell(DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT)));
+		DateField visaExpField = new DateField(new DateTimePropertyEditor(dateFormat));
+		configurers.add(new EditorConfigurer<IEmployeeDto, Date>(visaExpiryDateColumn, visaExpField));
+		columnConfig.add(visaExpiryDateColumn);
+
+		ColumnConfig<IEmployeeDto, Date> workPermissionExpiryColumn = new ColumnConfig<>(properties.workPermissionExpiryDate(),
+				150, getConstants().workPermissionExpiryDate());
+		workPermissionExpiryColumn.setCell(new DateCell(DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT)));
+		DateField workPermField = new DateField(new DateTimePropertyEditor(dateFormat));
+		configurers.add(new EditorConfigurer<IEmployeeDto, Date>(workPermissionExpiryColumn, workPermField));
+		columnConfig.add(workPermissionExpiryColumn);
+
+		ColumnConfig<IEmployeeDto, Date> statementExpiryColumn = new ColumnConfig<>(properties.statementExpiryDate(), 150,
+				getConstants().statementExpiryDate());
+		statementExpiryColumn.setCell(new DateCell(DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT)));
+		DateField statementField = new DateField(new DateTimePropertyEditor(dateFormat));
+		configurers.add(new EditorConfigurer<IEmployeeDto, Date>(statementExpiryColumn, statementField));
+		columnConfig.add(statementExpiryColumn);
 		return columnConfig;
 	}
 
@@ -154,7 +172,7 @@ public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmplo
 	}
 
 	private EmployeeGridConstants getConstants() {
-		if (constants == null ){
+		if (constants == null) {
 			constants = GWT.create(EmployeeGridConstants.class);
 		}
 		return constants;
@@ -173,6 +191,8 @@ public class EmployeeEditingGrid extends GenericEditingGrid<IEmployeeDto, IEmplo
 		storeElem.setLastName(modifiedRecord.getValue(properties.lastName()));
 		storeElem.setCompany(modifiedRecord.getValue(properties.company()));
 		storeElem.setVisaExpiredDate(modifiedRecord.getValue(properties.visaExpiredDate()));
+		storeElem.setWorkPermissionExpiryDate(modifiedRecord.getValue(properties.workPermissionExpiryDate()));
+		storeElem.setStatementExpiryDate(modifiedRecord.getValue(properties.statementExpiryDate()));
 	}
 
 	@Override

@@ -6,49 +6,72 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.dao.SaltSource;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.fpj.spring.security.RestAuthenticationEntryPoint;
+import com.fpj.spring.service.IUserService;
 
 @EnableWebSecurity
 @Configuration
 @ComponentScan(basePackages="com.fpj.spring.security")
-@EnableGlobalMethodSecurity(securedEnabled=true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	@Autowired
 	RestAuthenticationEntryPoint authenticationEntryPoint;
 	@Autowired 
 	DataSource dataSource;
+	@Autowired
+	IUserService userService;
 	
 	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder builder) throws Exception{
-		builder.inMemoryAuthentication().withUser("user").password("password").roles("USER");
+	public void configure(AuthenticationManagerBuilder builder) throws Exception{
+		//builder.inMemoryAuthentication().withUser("user").password("password").roles("USER");
+		builder.authenticationProvider(authProvider());
 	}
+	
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-			.authorizeRequests()
-			.anyRequest().authenticated()
-			.and().formLogin().loginProcessingUrl("/spring/login").defaultSuccessUrl("/spring/login/getRoles", true).permitAll()
-			.and().logout().logoutUrl("/spring/logout")
+			.formLogin().loginProcessingUrl("/spring/login")
+				.defaultSuccessUrl("/spring/login/getRoles", true)
+				.failureForwardUrl("/spring/login/error")
+			.and().logout().logoutUrl("/spring/logout").logoutSuccessUrl("/spring/login/logout")
 			.and().exceptionHandling().defaultAuthenticationEntryPointFor(authenticationEntryPoint, new AntPathRequestMatcher("**"))
 			.and().csrf().disable();
 		
 	}
 	
 	@Bean
-    public SessionRegistry sessionRegistry() {
-        SessionRegistry sessionRegistry = new SessionRegistryImpl();
-        return sessionRegistry;
+	AuthenticationProvider authProvider(){
+		DaoAuthenticationProvider result = new DaoAuthenticationProvider();
+		result.setSaltSource(new SaltSource() {
+			
+			@Override
+			public Object getSalt(UserDetails user) {
+				return "QX";
+			}
+		});
+		result.setUserDetailsService(userService);
+		result.setPasswordEncoder(new ShaPasswordEncoder());
+		return result;
+	}
+
+	
+	@Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
+
+
 }

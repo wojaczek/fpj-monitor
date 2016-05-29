@@ -102,6 +102,7 @@ public abstract class GenericService<DTO_TYPE extends IIdentifiableDto, LIST_RES
 	 * @see com.fpj.spring.service.IGenericService#list()
 	 */
 	@Override
+	@Transactional
 	public LIST_RESULT list() {
 		List<ENTITY> allEntities = getRepository().findAll();
 		LIST_RESULT result = createResult();
