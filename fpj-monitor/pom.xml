@@ -11,7 +11,7 @@
 		<gwt.version>2.7.0</gwt.version>
 		<spring.version>4.2.5.RELEASE</spring.version>
 		<spring.security.version>4.1.0.RELEASE</spring.security.version>
-		<gxt.version>3.1.1</gxt.version>
+		<gxt.version>4.0.0</gxt.version>
 		<postgres.version>9.3-1104-jdbc4</postgres.version>
 	</properties>
 	<dependencies>
