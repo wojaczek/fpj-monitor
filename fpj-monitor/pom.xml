@@ -125,9 +125,16 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>${gwt.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
 					<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
-					<draftCompile>true</draftCompile>
 				</configuration>
 			</plugin>
 			<plugin>
