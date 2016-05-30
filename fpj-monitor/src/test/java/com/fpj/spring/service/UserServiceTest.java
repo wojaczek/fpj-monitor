@@ -30,6 +30,7 @@ public class UserServiceTest {
 	UserRepository userRepository;
 
 	@Test
+	@Transactional
 	public void testGetAll() {
 		EntUser user = new EntUser();
 		user.setUsername(USERNAME);
@@ -38,9 +39,9 @@ public class UserServiceTest {
 		loadConfig.setLimit(20);
 		loadConfig.setOffset(0);
 		UserPagingLoadResultBean resultBean = userService.list(loadConfig);
-		Assert.assertEquals("Not retrieved properly", 1, resultBean.getTotalLength());
-		Assert.assertEquals("Not retrieved correctly", 1, resultBean.getData().size());
-		Assert.assertEquals("Not retrieved correctly", USERNAME, resultBean.getData().get(0).getUsername());
+		Assert.assertEquals("Not retrieved properly", 2, resultBean.getTotalLength());
+		Assert.assertEquals("Not retrieved correctly", 2, resultBean.getData().size());
+		Assert.assertEquals("Not retrieved correctly", USERNAME, resultBean.getData().get(1).getUsername());
 	}
 
 	@Test
